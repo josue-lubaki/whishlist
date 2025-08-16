@@ -17,6 +17,8 @@ struct ContentView: View {
             List {
                 ForEach(wishes) { wish in
                     Text(wish.title)
+                        .font(.title.weight(.light))
+                        .padding(.vertical, 2)
                 }
             }//: LIST
             .navigationTitle("WishList")
@@ -33,7 +35,21 @@ struct ContentView: View {
     }
 }
 
-#Preview {
+#Preview("List with Sample Data") {
+    let container = try! ModelContainer(for : Wish.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+    
+    container.mainContext.insert(Wish(title: "New MacBook Pro"))
+    container.mainContext.insert(Wish(title: "iPhone 15 Pro"))
+    container.mainContext.insert(Wish(title: "AirPods Pro"))
+    container.mainContext.insert(Wish(title: "Apple Watch Series 9"))
+    container.mainContext.insert(Wish(title: "iPad Pro"))
+    container.mainContext.insert(Wish(title: "HomePod"))
+    
+    return ContentView()
+        .modelContainer(container)
+}
+
+#Preview("Empty List") {
     ContentView()
         .modelContainer(for: Wish.self, inMemory: true)
 }
