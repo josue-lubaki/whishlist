@@ -12,6 +12,9 @@ struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var wishes: [Wish]
     
+    @State private var isAlertShowing : Bool = false
+    @State private var title : String = ""
+    
     var body: some View {
         NavigationStack {
             List {
@@ -22,6 +25,30 @@ struct ContentView: View {
                 }
             }//: LIST
             .navigationTitle("WishList")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing){
+                    Button {
+                        isAlertShowing.toggle()
+                    } label : {
+                        Image(systemName: "plus")
+                            .imageScale(.large)
+                    }
+                }
+            }
+            .alert("Create a new Wish", isPresented: $isAlertShowing){
+                TextField("Enter a wish", text : $title)
+                
+                Button {
+                    if title.isEmpty { return }
+                    else {
+                        let newWish = Wish(title: title)
+                        modelContext.insert(newWish)
+                        title = ""
+                    }
+                } label : {
+                    Text("Save")
+                }
+            }
             .overlay {
                 if wishes.isEmpty {
                     ContentUnavailableView(
@@ -31,6 +58,7 @@ struct ContentView: View {
                     )
                 }
             }
+           
         }
     }
 }
